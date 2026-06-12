@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentación del proyecto
+    url: https://github.com/ElBarSimson9593/sentiment-trend-bot#readme
+    about: README, demo y capturas del dashboard
+  - name: PRD (requisitos MVP)
+    url: https://github.com/ElBarSimson9593/sentiment-trend-bot/blob/master/docs/PRD.md
+    about: Alcance y criterios de aceptación

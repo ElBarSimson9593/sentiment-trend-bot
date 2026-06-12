@@ -1,0 +1,30 @@
+name: Bug
+description: Reportar un error o comportamiento inesperado
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Descripción
+      description: ¿Qué pasó y qué esperabas?
+      placeholder: Al enviar 3 menciones negativas, no se registra la alerta...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Pasos para reproducir
+      placeholder: |
+        1. docker compose up --build
+        2. python scripts/seed_demo.py --reset
+        3. Abrir http://localhost:8000
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Entorno
+      placeholder: Windows 11, Docker 29, Python 3.12
+    validations:
+      required: false
