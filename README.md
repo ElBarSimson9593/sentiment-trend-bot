@@ -1,15 +1,43 @@
 # SentimentTrend Bot
 
+[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 API de monitoreo de reputación con **análisis de sentimiento**, **alertas automáticas por webhook** y **mini-dashboard** con métricas en tiempo real.
 
-> Proyecto de portafolio — FastAPI · PostgreSQL · VADER Sentiment · Chart.js
+**Repositorio:** [github.com/ElBarSimson9593/sentiment-trend-bot](https://github.com/ElBarSimson9593/sentiment-trend-bot)
+
+> Proyecto de portafolio — FastAPI · PostgreSQL · VADER Sentiment · Chart.js  
+> Marca de demo ficticia: `novahome` (sector inmobiliario simulado)
+
+---
 
 ## Qué hace
 
-1. Recibes menciones públicas simuladas (comentarios, reseñas).
-2. La API clasifica sentimiento (`positive` / `neutral` / `negative`).
-3. Si hay un pico de negatividad, dispara webhook (Discord/Slack).
-4. El dashboard muestra KPIs, gráficos de distribución y evolución temporal.
+1. Ingesta menciones públicas simuladas (comentarios, reseñas).
+2. Clasifica sentimiento: `positive` / `neutral` / `negative`.
+3. Si hay un pico de negatividad, registra alerta y dispara webhook (Discord/Slack).
+4. Muestra KPIs, distribución, evolución temporal y historial de alertas en un dashboard.
+
+---
+
+## Capturas
+
+### Dashboard — KPIs y gráficos
+
+![Dashboard overview](docs/screenshots/dashboard-overview.png)
+
+### Evolución temporal y alertas
+
+![Dashboard timeline y alertas](docs/screenshots/dashboard-timeline-alertas.png)
+
+### API documentada (Swagger)
+
+![Swagger UI](docs/screenshots/api-docs.png)
+
+---
 
 ## Demo rápida
 
@@ -24,16 +52,28 @@ pip install -r requirements.txt
 python scripts/seed_demo.py --reset
 ```
 
-Abre **http://localhost:8000** → dashboard  
-Swagger: **http://localhost:8000/docs**
+| Recurso | URL |
+|---------|-----|
+| Dashboard | http://localhost:8000 |
+| Swagger | http://localhost:8000/docs |
+| Health | http://localhost:8000/health |
 
-## Capturas para portafolio
+> Postgres expone el puerto **5433** en host (5432 suele estar ocupado localmente).
 
-| Qué grabar | Para qué sirve |
-|------------|----------------|
-| Dashboard con gráficos | Emplea INACAP, LinkedIn, README |
-| POST en Swagger + alerta webhook | Entrevista técnica |
-| Repo público en GitHub | CV y portafolio Emplea INACAP |
+---
+
+## Stack
+
+| Capa | Tecnología |
+|------|------------|
+| API | FastAPI, Pydantic, SQLAlchemy |
+| Base de datos | PostgreSQL 16 |
+| Sentimiento | VADER + refuerzo léxico en español |
+| Frontend dashboard | Jinja2, Chart.js |
+| Infra | Docker Compose |
+| Tests | pytest |
+
+---
 
 ## Variables de entorno
 
@@ -46,9 +86,7 @@ Copia `.env.example` a `.env`:
 | `ALERT_NEGATIVE_THRESHOLD` | Negativos para alertar (default: 3) |
 | `ALERT_WINDOW_MINUTES` | Ventana en minutos (default: 60) |
 
-### Webhook Discord
-
-Crea un webhook en tu servidor Discord y pégalo en `WEBHOOK_URL`.
+---
 
 ## API principal
 
@@ -56,10 +94,13 @@ Crea un webhook en tu servidor Discord y pégalo en `WEBHOOK_URL`.
 POST /api/mentions
 {"brand": "novahome", "text": "Pésima atención", "source": "twitter"}
 
-GET /api/dashboard/novahome/metrics?hours=24
-GET /api/dashboard/novahome/timeline?hours=24
-GET /api/dashboard/novahome/alerts
+GET  /api/mentions?brand=novahome
+GET  /api/dashboard/novahome/metrics?hours=24
+GET  /api/dashboard/novahome/timeline?hours=24
+GET  /api/dashboard/novahome/alerts
 ```
+
+---
 
 ## Tests
 
@@ -67,6 +108,8 @@ GET /api/dashboard/novahome/alerts
 pip install -r requirements.txt
 pytest
 ```
+
+---
 
 ## Arquitectura
 
@@ -79,6 +122,12 @@ flowchart LR
   D --> F[Dashboard Chart.js]
 ```
 
+Documento de requisitos: [docs/PRD.md](docs/PRD.md)
+
+---
+
 ## Autor
 
-**Osvaldo Andrés Díaz Guzmán** — Estudiante Ing. en Informática INACAP · Antofagasta, Chile
+**Osvaldo Andrés Díaz Guzmán**  
+Estudiante Ing. en Informática · INACAP Antofagasta · Chile  
+Enfoque: desarrollo backend e IA aplicada
