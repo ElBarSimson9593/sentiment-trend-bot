@@ -3,6 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)](https://fastapi.tiangolo.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)](https://www.postgresql.org/)
+[![Tests](https://github.com/ElBarSimson9593/sentiment-trend-bot/actions/workflows/test.yml/badge.svg)](https://github.com/ElBarSimson9593/sentiment-trend-bot/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 API de monitoreo de reputación con **análisis de sentimiento**, **alertas automáticas por webhook** y **mini-dashboard** con métricas en tiempo real.
@@ -25,17 +26,17 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 
 ## Capturas
 
-### Dashboard — KPIs y gráficos
+### Dashboard — KPIs y métricas
 
-![Dashboard overview](docs/screenshots/dashboard-overview.png)
+![Dashboard métricas](docs/screenshots/metricas.png)
 
 ### Evolución temporal y alertas
 
-![Dashboard timeline y alertas](docs/screenshots/dashboard-timeline-alertas.png)
+![Dashboard alertas](docs/screenshots/alertas.png)
 
 ### API documentada (Swagger)
 
-![Swagger UI](docs/screenshots/api-docs.png)
+![Swagger UI](docs/screenshots/api.png)
 
 ---
 
