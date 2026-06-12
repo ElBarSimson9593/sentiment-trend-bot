@@ -1,0 +1,33 @@
+name: Feature
+description: Proponer una mejora o nueva funcionalidad
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema o necesidad
+      description: ¿Qué problema resuelve esta feature?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solución propuesta
+      description: ¿Cómo lo implementarías a alto nivel?
+    validations:
+      required: false
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área
+      options:
+        - API
+        - Dashboard
+        - Sentimiento / IA
+        - Alertas / Webhooks
+        - Base de datos
+        - DevOps / Deploy
+        - Documentación
+    validations:
+      required: true
