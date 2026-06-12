@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sentiment
+      POSTGRES_PASSWORD: sentiment
+      POSTGRES_DB: sentimenttrend
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sentiment -d sentimenttrend"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://sentiment:sentiment@db:5432/sentimenttrend
+      WEBHOOK_URL: ${WEBHOOK_URL:-}
+      ALERT_NEGATIVE_THRESHOLD: ${ALERT_NEGATIVE_THRESHOLD:-3}
+      ALERT_WINDOW_MINUTES: ${ALERT_WINDOW_MINUTES:-60}
+      ALERT_SCORE_THRESHOLD: ${ALERT_SCORE_THRESHOLD:--0.3}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

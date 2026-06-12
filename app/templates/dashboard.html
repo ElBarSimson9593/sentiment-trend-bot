@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title }}</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+</head>
+<body>
+  <header class="header">
+    <div>
+      <p class="eyebrow">SentimentTrend Bot</p>
+      <h1>Dashboard de reputación</h1>
+      <p class="subtitle">Métricas en tiempo real desde la API FastAPI</p>
+    </div>
+    <div class="controls">
+      <label>
+        Marca
+        <select id="brandSelect"></select>
+      </label>
+      <label>
+        Ventana
+        <select id="hoursSelect">
+          <option value="6">6 h</option>
+          <option value="24" selected>24 h</option>
+          <option value="72">72 h</option>
+        </select>
+      </label>
+      <button id="refreshBtn" type="button">Actualizar</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card kpi-card">
+      <span class="kpi-label">Menciones</span>
+      <strong id="kpiTotal" class="kpi-value">—</strong>
+    </section>
+    <section class="card kpi-card">
+      <span class="kpi-label">Sentimiento promedio</span>
+      <strong id="kpiAvg" class="kpi-value">—</strong>
+    </section>
+    <section class="card kpi-card">
+      <span class="kpi-label">Tendencia</span>
+      <strong id="kpiTrend" class="kpi-value trend">—</strong>
+    </section>
+    <section class="card kpi-card alert-kpi">
+      <span class="kpi-label">Alertas recientes</span>
+      <strong id="kpiAlerts" class="kpi-value">—</strong>
+    </section>
+
+    <section class="card chart-card">
+      <h2>Distribución de sentimiento</h2>
+      <canvas id="distributionChart"></canvas>
+    </section>
+
+    <section class="card chart-card">
+      <h2>Evolución temporal</h2>
+      <canvas id="timelineChart"></canvas>
+    </section>
+
+    <section class="card form-card">
+      <h2>Simular mención</h2>
+      <form id="mentionForm">
+        <textarea id="mentionText" rows="4" placeholder="Escribe un comentario público simulado..." required></textarea>
+        <input id="mentionSource" type="text" placeholder="Fuente (google_reviews, twitter, etc.)" value="demo" />
+        <button type="submit">Analizar y guardar</button>
+      </form>
+      <p id="formStatus" class="form-status"></p>
+    </section>
+
+    <section class="card table-card">
+      <h2>Últimas alertas</h2>
+      <ul id="alertsList" class="alerts-list"></ul>
+    </section>
+  </main>
+
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>
