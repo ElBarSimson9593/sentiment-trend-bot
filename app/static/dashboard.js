@@ -14,7 +14,7 @@ const BRAND_INFO = {
     title: "NovaHome",
     sector: "inmobiliaria ficticia",
     blurb:
-      "Marca de demostración del portafolio (no es una empresa real). Simula comentarios de clientes sobre venta/arriendo de propiedades.",
+      "Marca de demostración del portafolio (no es una empresa real). Al abrir el dashboard se cargan ~9 menciones repartidas en 24 h (positivas, neutras y negativas) para que el gráfico temporal y las alertas tengan sentido.",
   },
   urbacorp: {
     title: "UrbaCorp",

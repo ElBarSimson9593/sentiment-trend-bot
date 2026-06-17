@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     alert_negative_threshold: int = 3
     alert_window_minutes: int = 60
     alert_score_threshold: float = -0.3
+    auto_seed_demo: bool = True
+    seed_demo_reset: bool = False
 
 
 settings = Settings()

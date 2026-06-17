@@ -19,3 +19,5 @@ services:
         value: "3"
       - key: ALERT_WINDOW_MINUTES
         value: "60"
+      - key: AUTO_SEED_DEMO
+        value: "true"

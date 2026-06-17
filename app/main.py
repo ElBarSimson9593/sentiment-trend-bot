@@ -7,7 +7,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.database import Base, engine
+from app.config import settings
+from app.database import Base, SessionLocal, engine
+from app.demo_seed import ensure_demo_data
 from app.routers import dashboard, mentions
 
 
@@ -15,6 +17,15 @@ from app.routers import dashboard, mentions
 async def lifespan(_: FastAPI):
     if not os.getenv("TESTING"):
         Base.metadata.create_all(bind=engine)
+        db = SessionLocal()
+        try:
+            ensure_demo_data(
+                db,
+                auto_seed=settings.auto_seed_demo,
+                force_reset=settings.seed_demo_reset,
+            )
+        finally:
+            db.close()
     yield
 
 
