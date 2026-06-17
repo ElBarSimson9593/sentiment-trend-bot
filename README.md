@@ -29,10 +29,6 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 
 ## Capturas
 
-### Dashboard completo (producción)
-
-![Dashboard en Render — métricas, evolución temporal y alertas](docs/screenshots/dashboard.png)
-
 ### API documentada (Swagger)
 
 ![Swagger UI](docs/screenshots/api.png)
