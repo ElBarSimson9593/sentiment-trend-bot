@@ -76,6 +76,23 @@ python scripts/seed_demo.py --reset
 
 ---
 
+## Deploy en Render + Neon (free tier)
+
+**Base de datos (Neon, gratis y persistente):**
+
+1. [neon.tech](https://neon.tech) → proyecto nuevo → copia la connection string.
+2. Convierte a SQLAlchemy: `postgresql+psycopg://usuario:pass@host/db?sslmode=require`
+
+**API (Render):**
+
+1. [render.com](https://render.com) → **New** → **Blueprint** → repo `sentiment-trend-bot`.
+2. Pega `DATABASE_URL` cuando lo pida (`WEBHOOK_URL` opcional).
+3. Prueba `https://TU-SERVICIO.onrender.com/health` y el dashboard en `/`.
+
+> No uses Postgres de Render free (caduca ~30 días). Neon + Render web service = $0 sin tarjeta obligatoria en Neon.
+
+---
+
 ## Variables de entorno
 
 Copia `.env.example` a `.env`:
