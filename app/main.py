@@ -1,3 +1,4 @@
+import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -12,6 +13,8 @@ from app.database import Base, SessionLocal, engine
 from app.demo_seed import ensure_demo_data
 from app.routers import dashboard, mentions
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -24,6 +27,8 @@ async def lifespan(_: FastAPI):
                 auto_seed=settings.auto_seed_demo,
                 force_reset=settings.seed_demo_reset,
             )
+        except Exception:
+            logger.exception("No se pudo cargar el seed de demo al arrancar")
         finally:
             db.close()
     yield

@@ -10,6 +10,20 @@ from app.sentiment import analyze_text
 
 logger = logging.getLogger(__name__)
 
+DEMO_TEXTS = {
+    "Excelente atención, muy profesionales.",
+    "Respondieron rápido y cerraron la venta sin problemas.",
+    "Buena experiencia en general, recomendable.",
+    "El proceso fue normal, sin sorpresas.",
+    "Demoraron mucho en responder mis consultas.",
+    "El corredor fue amable pero el proceso fue lento.",
+    "Pésima atención, nunca más vuelvo.",
+    "Me cobraron cosas que no estaban claras en el contrato.",
+    "Estafa total, cuidado con esta empresa.",
+    "Producto decente por el precio.",
+    "No cumplieron lo prometido.",
+}
+
 # Marca ficticia — no usar empresas reales en portafolio.
 DEMO_MENTIONS: list[tuple[str, str, str, int]] = [
     ("novahome", "Excelente atención, muy profesionales.", "google_reviews", 23 * 60),
@@ -26,6 +40,21 @@ DEMO_MENTIONS: list[tuple[str, str, str, int]] = [
     ("urbacorp", "No cumplieron lo prometido.", "demo", 6 * 60),
 ]
 
+_MIN_TIMELINE_SPAN = timedelta(hours=3)
+
+
+def _aware(dt: datetime) -> datetime:
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
+def _mention_time_span(rows: list[Mention]) -> timedelta:
+    if len(rows) < 2:
+        return timedelta(0)
+    timestamps = [_aware(row.created_at) for row in rows]
+    return max(timestamps) - min(timestamps)
+
 
 def should_seed_demo(db: Session, *, force_reset: bool = False) -> bool:
     if force_reset:
@@ -35,11 +64,19 @@ def should_seed_demo(db: Session, *, force_reset: bool = False) -> bool:
     if count == 0:
         return True
 
-    # Reemplaza datos de prueba manuales que quedaron todos neutros (VADER en español).
-    if count < 20:
-        rows = db.query(Mention).all()
-        if rows and all(r.label == "neutral" and r.sentiment_score == 0.0 for r in rows):
-            return True
+    rows = db.query(Mention).all()
+
+    if count < 20 and all(r.label == "neutral" and r.sentiment_score == 0.0 for r in rows):
+        return True
+
+    # Pruebas manuales / mini-crisis en pocos minutos → gráfico temporal plano.
+    if _mention_time_span(rows) < _MIN_TIMELINE_SPAN:
+        return True
+
+    # Dataset distinto al de demo (p. ej. textos "bien", "muy bien" de prueba).
+    known_demo_rows = sum(1 for row in rows if row.text in DEMO_TEXTS)
+    if known_demo_rows < 3:
+        return True
 
     return False
 
