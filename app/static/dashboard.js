@@ -5,11 +5,46 @@ const brandSelect = document.getElementById("brandSelect");
 const hoursSelect = document.getElementById("hoursSelect");
 const refreshBtn = document.getElementById("refreshBtn");
 const mentionForm = document.getElementById("mentionForm");
+const brandContext = document.getElementById("brandContext");
+const exampleChips = document.getElementById("exampleChips");
+const crisisBtn = document.getElementById("crisisBtn");
+
+const BRAND_INFO = {
+  novahome: {
+    title: "NovaHome",
+    sector: "inmobiliaria ficticia",
+    blurb:
+      "Marca de demostración del portafolio (no es una empresa real). Simula comentarios de clientes sobre venta/arriendo de propiedades.",
+  },
+  urbacorp: {
+    title: "UrbaCorp",
+    sector: "marca secundaria de demo",
+    blurb: "Segunda marca ficticia para mostrar filtrado por brand en el dashboard.",
+  },
+};
+
+const EXAMPLES = [
+  { label: "Positivo", text: "Excelente atención, muy profesionales." },
+  { label: "Neutro", text: "El proceso fue normal, sin sorpresas." },
+  { label: "Negativo", text: "Pésima atención, nunca más vuelvo." },
+];
+
+const CRISIS_SAMPLES = [
+  "Pésima atención, nunca más vuelvo.",
+  "Me cobraron cosas que no estaban claras en el contrato.",
+  "Estafa total, cuidado con esta empresa.",
+];
 
 const trendLabels = {
   improving: "Mejorando",
   declining: "Empeorando",
   stable: "Estable",
+};
+
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  resizeDelay: 120,
 };
 
 async function fetchJson(url, options) {
@@ -33,26 +68,67 @@ function setTrendClass(el, trend) {
   el.classList.add("trend", trend);
 }
 
+function updateBrandContext(brand) {
+  const info = BRAND_INFO[brand] || {
+    title: brand,
+    sector: "marca de demo",
+    blurb: "Marca ficticia cargada en el sistema de demostración.",
+  };
+  brandContext.innerHTML = `
+    <strong>${info.title}</strong> — ${info.sector}. ${info.blurb}
+  `;
+}
+
+function renderExampleChips() {
+  exampleChips.innerHTML = "";
+  for (const sample of EXAMPLES) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = sample.label;
+    btn.title = sample.text;
+    btn.addEventListener("click", () => {
+      document.getElementById("mentionText").value = sample.text;
+    });
+    exampleChips.appendChild(btn);
+  }
+}
+
+async function postMention(text, source = "demo") {
+  return fetchJson("/api/mentions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ brand: currentBrand(), text, source }),
+  });
+}
+
 async function loadBrands() {
   const data = await fetchJson("/api/dashboard/brands");
+  const previous = brandSelect.value;
   brandSelect.innerHTML = "";
 
   const brands = data.brands.length ? data.brands : ["novahome"];
   for (const brand of brands) {
     const option = document.createElement("option");
     option.value = brand;
-    option.textContent = brand;
+    option.textContent = BRAND_INFO[brand]?.title || brand;
     brandSelect.appendChild(option);
+  }
+
+  if (previous && brands.includes(previous)) {
+    brandSelect.value = previous;
   }
 }
 
 async function loadMetrics() {
   const brand = currentBrand();
   const hours = currentHours();
+  updateBrandContext(brand);
   const metrics = await fetchJson(`/api/dashboard/${brand}/metrics?hours=${hours}`);
 
   document.getElementById("kpiTotal").textContent = metrics.total_mentions;
   document.getElementById("kpiAvg").textContent = metrics.avg_sentiment.toFixed(2);
+  document.getElementById("kpiBreakdown").textContent =
+    `+${metrics.positive} · ~${metrics.neutral} · -${metrics.negative}`;
   document.getElementById("kpiAlerts").textContent = metrics.recent_alerts;
 
   const trendEl = document.getElementById("kpiTrend");
@@ -71,7 +147,8 @@ async function loadMetrics() {
       }],
     },
     options: {
-      plugins: { legend: { labels: { color: "#e8edf7" } } },
+      ...chartDefaults,
+      plugins: { legend: { labels: { color: "#e8edf7", boxWidth: 12 } } },
     },
   });
 
@@ -90,14 +167,15 @@ async function loadMetrics() {
         fill: true,
         tension: 0.35,
         spanGaps: true,
-        pointRadius: timeline.points.map((p) => (p.avg_score === null ? 0 : 4)),
-        pointHoverRadius: 6,
+        pointRadius: timeline.points.map((p) => (p.avg_score === null ? 0 : 3)),
+        pointHoverRadius: 5,
       }],
     },
     options: {
+      ...chartDefaults,
       scales: {
         x: {
-          ticks: { color: "#9aa8c7", maxRotation: 45, minRotation: 0 },
+          ticks: { color: "#9aa8c7", maxRotation: 0, autoSkip: true, maxTicksLimit: 8 },
           grid: { color: "#24304a" },
         },
         y: {
@@ -119,7 +197,8 @@ async function loadAlerts() {
   list.innerHTML = "";
 
   if (!alerts.length) {
-    list.innerHTML = "<li>Sin alertas registradas para esta marca.</li>";
+    list.innerHTML =
+      "<li>Sin alertas aún. Usa <strong>Simular mini-crisis</strong> o envía 3 comentarios negativos en una hora.</li>";
     return;
   }
 
@@ -146,15 +225,8 @@ mentionForm.addEventListener("submit", async (event) => {
   const source = document.getElementById("mentionSource").value.trim() || "demo";
 
   try {
-    const result = await fetchJson("/api/mentions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ brand: currentBrand(), text, source }),
-    });
-
-    const alertMsg = result.alert_triggered
-      ? " · ⚠️ Alerta disparada"
-      : "";
+    const result = await postMention(text, source);
+    const alertMsg = result.alert_triggered ? " · Alerta disparada" : "";
     status.textContent = `Guardado: ${result.label} (${result.sentiment_score.toFixed(2)})${alertMsg}`;
     document.getElementById("mentionText").value = "";
     await loadBrands();
@@ -164,17 +236,45 @@ mentionForm.addEventListener("submit", async (event) => {
   }
 });
 
+crisisBtn.addEventListener("click", async () => {
+  const status = document.getElementById("formStatus");
+  crisisBtn.disabled = true;
+  status.textContent = "Enviando 3 menciones negativas de demo…";
+  try {
+    let triggered = false;
+    for (const text of CRISIS_SAMPLES) {
+      const result = await postMention(text, "demo_crisis");
+      triggered = triggered || result.alert_triggered;
+    }
+    status.textContent = triggered
+      ? "Mini-crisis simulada. Revisa alertas y gráficos."
+      : "Menciones negativas guardadas. Si ya hubo alerta reciente, no se repite.";
+    await loadBrands();
+    await refreshDashboard();
+  } catch (error) {
+    status.textContent = `Error en simulación: ${error.message}`;
+  } finally {
+    crisisBtn.disabled = false;
+  }
+});
+
 brandSelect.addEventListener("change", refreshDashboard);
 hoursSelect.addEventListener("change", refreshDashboard);
 refreshBtn.addEventListener("click", refreshDashboard);
 
+window.addEventListener("resize", () => {
+  distributionChart?.resize();
+  timelineChart?.resize();
+});
+
 (async function init() {
+  renderExampleChips();
   try {
     await loadBrands();
     await refreshDashboard();
   } catch (error) {
     document.querySelector(".subtitle").textContent =
-      "No se pudo cargar el dashboard. ¿Está corriendo la API?";
+      "No se pudo cargar el dashboard. Verifica que la API esté activa.";
     console.error(error);
   }
 })();

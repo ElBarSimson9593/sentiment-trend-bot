@@ -3,8 +3,16 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 _analyzer = SentimentIntensityAnalyzer()
 
 
-_NEGATIVE_HINTS = ("estafa", "pésima", "pesima", "horrible", "nunca más", "nunca mas", "fraude")
-_POSITIVE_HINTS = ("excelente", "recomendable", "profesionales", "amable", "rápido", "rapido")
+_NEGATIVE_HINTS = (
+    "estafa", "pésima", "pesima", "pésimo", "pesimo", "horrible", "terrible",
+    "nunca más", "nunca mas", "fraude", "malo", "malísima", "malisima", "cuidado",
+    "decepción", "decepcion", "robo", "mentira", "no recomiendo", "pésimo servicio",
+)
+_POSITIVE_HINTS = (
+    "excelente", "recomendable", "profesionales", "profesional", "amable",
+    "rápido", "rapido", "bueno", "buena", "buenísimo", "buenisimo", "muy bien",
+    "genial", "satisfecho", "recomiendo", "calidad", "confiable", "transparente",
+)
 
 
 def analyze_text(text: str) -> tuple[float, str]:

@@ -9,15 +9,17 @@
 </head>
 <body>
   <header class="header">
-    <div>
-      <p class="eyebrow">SentimentTrend Bot</p>
-      <h1>Dashboard de reputación</h1>
-      <p class="subtitle">Métricas en tiempo real desde la API FastAPI</p>
+    <div class="header-copy">
+      <p class="eyebrow">SentimentTrend Bot · Demo de portafolio</p>
+      <h1>Monitoreo de reputación de marcas</h1>
+      <p class="subtitle">
+        Pipeline FastAPI que analiza menciones públicas simuladas y dispara alertas ante picos de negatividad.
+      </p>
     </div>
     <div class="controls">
       <label>
-        Marca
-        <select id="brandSelect"></select>
+        Marca (demo)
+        <select id="brandSelect" title="Marcas ficticias del dataset de demostración"></select>
       </label>
       <label>
         Ventana
@@ -31,6 +33,9 @@
     </div>
   </header>
 
+  <section class="demo-banner card" id="brandContext">
+  </section>
+
   <main class="grid">
     <section class="card kpi-card">
       <span class="kpi-label">Menciones</span>
@@ -39,6 +44,7 @@
     <section class="card kpi-card">
       <span class="kpi-label">Sentimiento promedio</span>
       <strong id="kpiAvg" class="kpi-value">—</strong>
+      <p id="kpiBreakdown" class="kpi-breakdown">—</p>
     </section>
     <section class="card kpi-card">
       <span class="kpi-label">Tendencia</span>
@@ -51,20 +57,31 @@
 
     <section class="card chart-card">
       <h2>Distribución de sentimiento</h2>
-      <canvas id="distributionChart"></canvas>
+      <div class="chart-wrap">
+        <canvas id="distributionChart"></canvas>
+      </div>
     </section>
 
     <section class="card chart-card">
       <h2>Evolución temporal</h2>
-      <canvas id="timelineChart"></canvas>
+      <div class="chart-wrap chart-wrap-wide">
+        <canvas id="timelineChart"></canvas>
+      </div>
     </section>
 
     <section class="card form-card">
       <h2>Simular mención</h2>
+      <p class="hint">
+        Prueba textos en español. Las alertas se activan con 3 menciones <strong>negativas</strong> en 60 minutos.
+      </p>
+      <div class="example-chips" id="exampleChips"></div>
       <form id="mentionForm">
-        <textarea id="mentionText" rows="4" placeholder="Escribe un comentario público simulado..." required></textarea>
-        <input id="mentionSource" type="text" placeholder="Fuente (google_reviews, twitter, etc.)" value="demo" />
-        <button type="submit">Analizar y guardar</button>
+        <textarea id="mentionText" rows="3" placeholder="Ej: Pésima atención, nunca más vuelvo." required></textarea>
+        <input id="mentionSource" type="text" placeholder="Fuente (google_reviews, twitter…)" value="demo" />
+        <div class="form-actions">
+          <button type="submit">Analizar y guardar</button>
+          <button type="button" id="crisisBtn" class="btn-secondary">Simular mini-crisis (3 negativas)</button>
+        </div>
       </form>
       <p id="formStatus" class="form-status"></p>
     </section>
@@ -74,6 +91,10 @@
       <ul id="alertsList" class="alerts-list"></ul>
     </section>
   </main>
+
+  <footer class="footer">
+    <p>Proyecto de portafolio — Osvaldo Díaz · <a href="https://github.com/ElBarSimson9593/sentiment-trend-bot" target="_blank" rel="noopener">GitHub</a></p>
+  </footer>
 
   <script src="/static/dashboard.js"></script>
 </body>
