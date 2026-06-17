@@ -14,8 +14,6 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 > Proyecto de portafolio — FastAPI · PostgreSQL · VADER Sentiment · Chart.js  
 > Marca de demo ficticia: `novahome` (sector inmobiliario simulado)
 
-![Dashboard SentimentTrend Bot — KPIs, gráficos y alertas de crisis](docs/screenshots/dashboard.png)
-
 ---
 
 ## Qué hace
@@ -28,6 +26,30 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 ---
 
 ## Capturas
+
+### Vista general
+
+![Dashboard SentimentTrend Bot](docs/screenshots/dashboard.png)
+
+### KPIs en tiempo real
+
+![Menciones, sentimiento promedio, tendencia y alertas](docs/screenshots/kpis.png)
+
+### Distribución de sentimiento
+
+![Gráfico de dona — positivo, neutro y negativo](docs/screenshots/distribucion.png)
+
+### Evolución temporal
+
+![Línea de sentimiento y volumen de menciones por franja horaria](docs/screenshots/timeline.png)
+
+### Alertas de crisis reputacional
+
+![Historial de alertas automáticas](docs/screenshots/alertas-lista.png)
+
+### Simular mención y mini-crisis
+
+![Formulario de prueba y botón de simulación de crisis](docs/screenshots/simular-mencion.png)
 
 ### API documentada (Swagger)
 
