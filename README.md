@@ -8,10 +8,13 @@
 
 API de monitoreo de reputación con **análisis de sentimiento**, **alertas automáticas por webhook** y **mini-dashboard** con métricas en tiempo real.
 
+**Demo en vivo:** [sentiment-trend-bot.onrender.com](https://sentiment-trend-bot.onrender.com)  
 **Repositorio:** [github.com/ElBarSimson9593/sentiment-trend-bot](https://github.com/ElBarSimson9593/sentiment-trend-bot)
 
 > Proyecto de portafolio — FastAPI · PostgreSQL · VADER Sentiment · Chart.js  
 > Marca de demo ficticia: `novahome` (sector inmobiliario simulado)
+
+![Dashboard SentimentTrend Bot — KPIs, gráficos y alertas de crisis](docs/screenshots/dashboard.png)
 
 ---
 
@@ -26,13 +29,9 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 
 ## Capturas
 
-### Dashboard — KPIs y métricas
+### Dashboard completo (producción)
 
-![Dashboard métricas](docs/screenshots/metricas.png)
-
-### Evolución temporal y alertas
-
-![Dashboard alertas](docs/screenshots/alertas.png)
+![Dashboard en Render — métricas, evolución temporal y alertas](docs/screenshots/dashboard.png)
 
 ### API documentada (Swagger)
 
