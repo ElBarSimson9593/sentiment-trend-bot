@@ -31,3 +31,25 @@ def test_dashboard_metrics(client):
     data = response.json()
     assert data["total_mentions"] >= 1
     assert "avg_sentiment" in data
+
+
+def test_simulate_crisis_creates_alert(client):
+    response = client.post("/api/demo/simulate-crisis?brand=novahome")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["mentions_created"] == 3
+    assert body["alert_triggered"] is True
+
+    alerts = client.get("/api/dashboard/novahome/alerts?limit=5")
+    assert alerts.status_code == 200
+    assert len(alerts.json()) >= 1
+
+
+def test_simulate_crisis_can_repeat_alert(client):
+    first = client.post("/api/demo/simulate-crisis?brand=demobrand")
+    second = client.post("/api/demo/simulate-crisis?brand=demobrand")
+    assert first.json()["alert_triggered"] is True
+    assert second.json()["alert_triggered"] is True
+
+    alerts = client.get("/api/dashboard/demobrand/alerts?limit=5")
+    assert len(alerts.json()) >= 2

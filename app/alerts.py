@@ -57,22 +57,23 @@ async def dispatch_webhook(payload: dict) -> bool:
     return True
 
 
-async def evaluate_and_alert(db: Session, brand: str) -> bool:
+async def evaluate_and_alert(db: Session, brand: str, *, force: bool = False) -> bool:
     triggered, count, avg_score, message = should_alert(db, brand)
     if not triggered:
         return False
 
-    window_start = _utcnow() - timedelta(minutes=settings.alert_window_minutes)
-    recent_alert = next(
-        (
-            alert
-            for alert in db.query(AlertLog).filter(AlertLog.brand == brand).all()
-            if _aware(alert.created_at) >= window_start
-        ),
-        None,
-    )
-    if recent_alert:
-        return False
+    if not force:
+        window_start = _utcnow() - timedelta(minutes=settings.alert_window_minutes)
+        recent_alert = next(
+            (
+                alert
+                for alert in db.query(AlertLog).filter(AlertLog.brand == brand).all()
+                if _aware(alert.created_at) >= window_start
+            ),
+            None,
+        )
+        if recent_alert:
+            return False
 
     log = AlertLog(
         brand=brand,

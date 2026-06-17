@@ -29,12 +29,6 @@ const EXAMPLES = [
   { label: "Negativo", text: "Pésima atención, nunca más vuelvo." },
 ];
 
-const CRISIS_SAMPLES = [
-  "Pésima atención, nunca más vuelvo.",
-  "Me cobraron cosas que no estaban claras en el contrato.",
-  "Estafa total, cuidado con esta empresa.",
-];
-
 const trendLabels = {
   improving: "Mejorando",
   declining: "Empeorando",
@@ -261,16 +255,16 @@ mentionForm.addEventListener("submit", async (event) => {
 crisisBtn.addEventListener("click", async () => {
   const status = document.getElementById("formStatus");
   crisisBtn.disabled = true;
-  status.textContent = "Enviando 3 menciones negativas de demo…";
+  status.textContent = "Simulando mini-crisis (3 negativas + alerta)…";
   try {
-    let triggered = false;
-    for (const text of CRISIS_SAMPLES) {
-      const result = await postMention(text, "demo_crisis");
-      triggered = triggered || result.alert_triggered;
-    }
-    status.textContent = triggered
-      ? "Mini-crisis simulada. Revisa alertas y gráficos."
-      : "Menciones negativas guardadas. Si ya hubo alerta reciente, no se repite.";
+    const brand = currentBrand();
+    const result = await fetchJson(
+      `/api/demo/simulate-crisis?brand=${encodeURIComponent(brand)}`,
+      { method: "POST" },
+    );
+    status.textContent = result.alert_triggered
+      ? `Alerta creada: ${result.mentions_created} menciones negativas en la última hora.`
+      : "No se pudo disparar la alerta (revisa el umbral de negativas).";
     await loadBrands();
     await refreshDashboard();
   } catch (error) {

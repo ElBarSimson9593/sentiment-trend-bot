@@ -55,3 +55,10 @@ class AlertOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class CrisisSimulationOut(BaseModel):
+    brand: str
+    mentions_created: int
+    mention_ids: list[int]
+    alert_triggered: bool

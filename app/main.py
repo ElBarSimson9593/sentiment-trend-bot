@@ -11,7 +11,7 @@ from fastapi.templating import Jinja2Templates
 from app.config import settings
 from app.database import Base, SessionLocal, engine
 from app.demo_seed import ensure_demo_data
-from app.routers import dashboard, mentions
+from app.routers import dashboard, demo, mentions
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +48,7 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(mentions.router)
 app.include_router(dashboard.router)
+app.include_router(demo.router)
 
 
 @app.get("/health")
