@@ -53,9 +53,15 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 
 ### API documentada (Swagger)
 
-Endpoints y schemas en producción: [sentiment-trend-bot.onrender.com/docs](https://sentiment-trend-bot.onrender.com/docs)
+Demo en producción: [sentiment-trend-bot.onrender.com/docs](https://sentiment-trend-bot.onrender.com/docs)
 
-![Swagger UI — endpoints y schemas](docs/screenshots/api.png)
+#### Endpoints
+
+![Swagger UI — endpoints mentions, dashboard, demo y health](docs/screenshots/api-endpoints.png)
+
+#### Schemas
+
+![Swagger UI — modelos Pydantic de request y response](docs/screenshots/api-schemas.png)
 
 ---
 
