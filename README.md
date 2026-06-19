@@ -53,11 +53,25 @@ API de monitoreo de reputación con **análisis de sentimiento**, **alertas auto
 
 ### API documentada (Swagger)
 
-![Swagger UI](docs/screenshots/api.png)
+Endpoints y schemas en producción: [sentiment-trend-bot.onrender.com/docs](https://sentiment-trend-bot.onrender.com/docs)
+
+![Swagger UI — endpoints y schemas](docs/screenshots/api.png)
 
 ---
 
-## Demo rápida
+## Demo en vivo
+
+| Recurso | URL |
+|---------|-----|
+| Dashboard | https://sentiment-trend-bot.onrender.com |
+| Swagger | https://sentiment-trend-bot.onrender.com/docs |
+| Health | https://sentiment-trend-bot.onrender.com/health |
+
+> El free tier de Render entra en sleep tras inactividad (~30–60 s al despertar).
+
+---
+
+## Demo local
 
 ```bash
 docker compose up --build
