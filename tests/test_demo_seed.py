@@ -1,6 +1,13 @@
 from datetime import datetime, timedelta, timezone
 
-from app.demo_seed import DEMO_MENTIONS, ensure_demo_data, run_demo_seed, should_seed_demo
+from app.demo_seed import (
+    DEMO_MENTIONS,
+    _demo_data_stale,
+    ensure_demo_data,
+    refresh_stale_demo_if_needed,
+    run_demo_seed,
+    should_seed_demo,
+)
 from app.models import Mention
 
 
@@ -82,3 +89,34 @@ def test_should_seed_when_demo_data_stale(db_session):
         row.created_at = old
     db_session.commit()
     assert should_seed_demo(db_session) is True
+
+
+def test_demo_data_not_stale_without_demo_brands(db_session):
+    db_session.add(
+        Mention(
+            brand="acme",
+            text="Gran servicio",
+            source="demo",
+            sentiment_score=0.5,
+            label="positive",
+            created_at=datetime.now(timezone.utc),
+        )
+    )
+    db_session.commit()
+    assert _demo_data_stale(db_session) is False
+
+
+def test_refresh_stale_demo_skips_non_demo_brands(db_session):
+    db_session.add(
+        Mention(
+            brand="acme",
+            text="Gran servicio",
+            source="demo",
+            sentiment_score=0.5,
+            label="positive",
+            created_at=datetime.now(timezone.utc),
+        )
+    )
+    db_session.commit()
+    refresh_stale_demo_if_needed(db_session, auto_seed=True)
+    assert db_session.query(Mention).count() == 1

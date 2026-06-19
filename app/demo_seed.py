@@ -64,7 +64,7 @@ def _demo_data_stale(db: Session) -> bool:
     now = datetime.now(timezone.utc)
     rows = db.query(Mention).filter(Mention.brand.in_(_DEMO_BRANDS)).all()
     if not rows:
-        return True
+        return False
 
     newest = max(_aware(row.created_at) for row in rows)
     if now - newest > _DEMO_STALE_AFTER:
@@ -160,3 +160,12 @@ def ensure_demo_data(db: Session, *, auto_seed: bool, force_reset: bool = False)
 
     count = run_demo_seed(db, reset=True)
     logger.info("Demo seed cargado: %s menciones repartidas en 24 h.", count)
+
+
+def refresh_stale_demo_if_needed(db: Session, *, auto_seed: bool) -> None:
+    """Solo refresca timestamps del dataset demo; no borra marcas de prueba ajenas."""
+    if not auto_seed or not _demo_data_stale(db):
+        return
+
+    count = run_demo_seed(db, reset=True)
+    logger.info("Demo seed refrescado: %s menciones repartidas en 24 h.", count)

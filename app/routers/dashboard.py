@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
-from app.demo_seed import ensure_demo_data
+from app.demo_seed import refresh_stale_demo_if_needed
 from app.models import AlertLog, Mention
 from app.schemas import AlertOut, DashboardMetrics, TimelineOut, TimelinePoint
 
@@ -34,8 +34,7 @@ def _mentions_for_brand(db: Session, brand: str, since: datetime | None = None) 
 
 
 def _refresh_demo_if_needed(db: Session) -> None:
-    if settings.auto_seed_demo:
-        ensure_demo_data(db, auto_seed=True)
+    refresh_stale_demo_if_needed(db, auto_seed=settings.auto_seed_demo)
 
 
 @router.get("/brands")
