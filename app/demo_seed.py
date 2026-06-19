@@ -41,6 +41,9 @@ DEMO_MENTIONS: list[tuple[str, str, str, int]] = [
 ]
 
 _MIN_TIMELINE_SPAN = timedelta(hours=3)
+_DEMO_STALE_AFTER = timedelta(hours=20)
+_DEMO_WINDOW = timedelta(hours=23)
+_DEMO_BRANDS = ("novahome", "urbacorp")
 
 
 def _aware(dt: datetime) -> datetime:
@@ -54,6 +57,26 @@ def _mention_time_span(rows: list[Mention]) -> timedelta:
         return timedelta(0)
     timestamps = [_aware(row.created_at) for row in rows]
     return max(timestamps) - min(timestamps)
+
+
+def _demo_data_stale(db: Session) -> bool:
+    """Demo usa ventana de 24 h; sin re-seed el dashboard queda vacío para reclutadores."""
+    now = datetime.now(timezone.utc)
+    rows = db.query(Mention).filter(Mention.brand.in_(_DEMO_BRANDS)).all()
+    if not rows:
+        return True
+
+    newest = max(_aware(row.created_at) for row in rows)
+    if now - newest > _DEMO_STALE_AFTER:
+        return True
+
+    since = now - _DEMO_WINDOW
+    novahome_recent = [
+        row
+        for row in rows
+        if row.brand == "novahome" and _aware(row.created_at) >= since
+    ]
+    return len(novahome_recent) < 5
 
 
 def should_seed_demo(db: Session, *, force_reset: bool = False) -> bool:
@@ -76,6 +99,9 @@ def should_seed_demo(db: Session, *, force_reset: bool = False) -> bool:
     # Dataset distinto al de demo (p. ej. textos "bien", "muy bien" de prueba).
     known_demo_rows = sum(1 for row in rows if row.text in DEMO_TEXTS)
     if known_demo_rows < 3:
+        return True
+
+    if _demo_data_stale(db):
         return True
 
     return False

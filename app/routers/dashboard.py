@@ -3,7 +3,9 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import get_db
+from app.demo_seed import ensure_demo_data
 from app.models import AlertLog, Mention
 from app.schemas import AlertOut, DashboardMetrics, TimelineOut, TimelinePoint
 
@@ -31,8 +33,14 @@ def _mentions_for_brand(db: Session, brand: str, since: datetime | None = None) 
     return [m for m in rows if _aware(m.created_at) >= since]
 
 
+def _refresh_demo_if_needed(db: Session) -> None:
+    if settings.auto_seed_demo:
+        ensure_demo_data(db, auto_seed=True)
+
+
 @router.get("/brands")
 def list_brands(db: Session = Depends(get_db)):
+    _refresh_demo_if_needed(db)
     rows = db.query(Mention.brand).distinct().order_by(Mention.brand).all()
     return {"brands": [r[0] for r in rows]}
 
@@ -43,6 +51,7 @@ def get_metrics(
     hours: int = Query(default=24, ge=1, le=168),
     db: Session = Depends(get_db),
 ):
+    _refresh_demo_if_needed(db)
     brand = _normalize_brand(brand)
     since = _since(hours)
     mentions = _mentions_for_brand(db, brand, since)
@@ -96,6 +105,7 @@ def get_timeline(
     hours: int = Query(default=24, ge=1, le=168),
     db: Session = Depends(get_db),
 ):
+    _refresh_demo_if_needed(db)
     brand = _normalize_brand(brand)
     since = _since(hours)
     mentions = _mentions_for_brand(db, brand, since)
@@ -131,6 +141,7 @@ def get_alerts(
     limit: int = Query(default=10, ge=1, le=50),
     db: Session = Depends(get_db),
 ):
+    _refresh_demo_if_needed(db)
     brand = _normalize_brand(brand)
     rows = (
         db.query(AlertLog)

@@ -73,3 +73,12 @@ def test_timeline_spreads_after_seed(db_session):
     result = get_timeline("novahome", 24, db_session)
     filled = [p for p in result.points if p.count > 0]
     assert len(filled) >= 4
+
+
+def test_should_seed_when_demo_data_stale(db_session):
+    run_demo_seed(db_session, reset=True)
+    old = datetime.now(timezone.utc) - timedelta(hours=30)
+    for row in db_session.query(Mention).all():
+        row.created_at = old
+    db_session.commit()
+    assert should_seed_demo(db_session) is True
